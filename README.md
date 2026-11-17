@@ -77,7 +77,7 @@ los **servicios** contienen las consultas SQL y los **modelos** representan los 
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/TU_USUARIO/tienda-php.git
+   git clone https://github.com/tokelad/tienda-php.git
    cd tienda-php
    ```
 2. Crear el archivo de variables de entorno a partir del ejemplo:

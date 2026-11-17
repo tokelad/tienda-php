@@ -1,14 +1,17 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once 'header.php';
 
 use config\Config;
 use services\ProductosService;
+use services\SessionService;
 
+$session = SessionService::getInstance();
 $productosService = new ProductosService(Config::getInstance()->connect());
 
 $busqueda = trim($_GET['busqueda'] ?? '');
 $productos = $productosService->findAllWithCategoryName($busqueda);
+
+require_once 'header.php';
 ?>
 
 <h1>Bienvenido, <?php echo htmlspecialchars($session->getUsername()); ?></h1>
