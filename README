@@ -1,0 +1,124 @@
+# Tienda Online en PHP
+
+Aplicación web para la gestión de una tienda online, desarrollada en **PHP sin frameworks** para el módulo
+Desarrollo Web en Entorno Servidor (2º DAW).
+
+## Descripción
+
+La aplicación permite gestionar un catálogo de productos (CRUD completo) con control de acceso por roles:
+
+- Cualquier visitante puede ver el listado de productos y buscar por marca o modelo.
+- Los usuarios registrados pueden ver los detalles de cada producto.
+- El administrador puede crear, modificar y eliminar productos, y cambiar su imagen.
+
+Además, la aplicación muestra el número de visitas y la fecha del último login del usuario,
+y la sesión caduca tras 1 hora de inactividad.
+
+| Operación              | Invitado | USER | ADMIN |
+|------------------------|----------|------|-------|
+| Ver listado y buscar   | Sí       | Sí   | Sí    |
+| Ver detalles           | No       | Sí   | Sí    |
+| Crear producto         | No       | No   | Sí    |
+| Modificar producto     | No       | No   | Sí    |
+| Cambiar imagen         | No       | No   | Sí    |
+| Eliminar producto      | No       | No   | Sí    |
+
+## Tecnologías utilizadas
+
+- **PHP 8.2** (programación orientada a objetos, namespaces)
+- **PostgreSQL 12** con **PDO** y consultas preparadas
+- **Apache** (imagen `php:8.2-apache`)
+- **Docker** y **Docker Compose**
+- **Composer** con autoload PSR-4
+- Librerías: `vlucas/phpdotenv` (variables de entorno) y `ramsey/uuid` (identificadores únicos)
+- **Bootstrap 5** para el diseño
+- **Adminer** para gestionar la base de datos
+
+## Requisitos previos
+
+- Docker Desktop (con Docker Compose)
+- Git
+- Navegador web
+
+No hace falta instalar PHP, Composer ni PostgreSQL en el ordenador: todo funciona dentro de los contenedores.
+
+## Estructura del proyecto
+
+```
+tienda/
+├── public/                  Páginas PHP (lo único accesible desde el navegador)
+│   ├── index.php            Listado y búsqueda de productos
+│   ├── header.php           Cabecera y menú (común a todas las páginas)
+│   ├── footer.php           Pie de página
+│   ├── login.php / logout.php
+│   ├── details.php          Detalles de un producto
+│   ├── create.php           Crear producto
+│   ├── update.php           Modificar producto
+│   ├── delete.php           Eliminar producto
+│   ├── update-image.php     Formulario para cambiar la imagen
+│   ├── update_image_file.php  Procesa la subida de la imagen
+│   └── uploads/             Imágenes de los productos
+├── src/                     Clases de la aplicación (fuera del alcance del navegador)
+│   ├── config/Config.php    Configuración y conexión PDO (Singleton)
+│   ├── models/              Categoria, Producto, User
+│   └── services/            CategoriasService, ProductosService, SessionService, UsersService
+├── database/init.sql        Creación de tablas y datos de ejemplo
+├── docker-compose.yml       Contenedores: php-app, postgres-db y adminer
+├── Dockerfile               Imagen de PHP + Apache
+├── composer.json            Dependencias y autoload
+└── .env.example             Ejemplo de variables de entorno
+```
+
+**Arquitectura:** las páginas de `public/` reciben las peticiones y muestran el HTML,
+los **servicios** contienen las consultas SQL y los **modelos** representan los datos.
+`Config` y `SessionService` utilizan el patrón **Singleton**.
+
+## Instalación
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/TU_USUARIO/tienda-php.git
+   cd tienda-php
+   ```
+2. Crear el archivo de variables de entorno a partir del ejemplo:
+   ```bash
+   cp .env.example .env
+   ```
+   (en Windows: `copy .env.example .env`)
+3. Levantar los contenedores (la base de datos se crea automáticamente con `database/init.sql`):
+   ```bash
+   docker compose up -d --build
+   ```
+4. Instalar las dependencias de Composer:
+   ```bash
+   docker exec -it php_app composer install
+   ```
+
+## Uso
+
+- Aplicación: **http://localhost:8080**
+- Adminer: **http://localhost:8081** (Sistema: PostgreSQL, Servidor: `postgres-db`,
+  Usuario: `admin`, Contraseña: `adminPassword123`, Base de datos: `tienda`)
+
+**Usuarios de prueba:**
+
+| Usuario | Contraseña | Rol          |
+|---------|------------|--------------|
+| admin   | admin1234  | ADMIN, USER  |
+| user    | user1234   | USER         |
+
+**Navegación:** desde la página principal se puede buscar productos. Con el botón *Login*
+se inicia sesión; según el rol aparecen los botones *Detalles*, *Editar*, *Imagen* y *Eliminar*,
+y el enlace *Nuevo producto* en el menú.
+
+Para parar la aplicación: `docker compose down`
+(con `docker compose down -v` también se borra la base de datos).
+
+## Autor
+
+**Oleksandr Rudynskyy** — 2º DAW Semipresencial, IES Juan de Garay
+GitHub: https://github.com/tokelad
+
+## Licencia
+
+Uso educativo.
